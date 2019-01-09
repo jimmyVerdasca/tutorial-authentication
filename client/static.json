@@ -1,0 +1,11 @@
+{
+  "root": "build/",
+  "proxies": {
+    "/auth/": {
+      "origin": "/auth"
+    },
+    "/api/": {
+      "origin": "/api"
+    }
+  }
+}
