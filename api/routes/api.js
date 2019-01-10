@@ -1,7 +1,10 @@
+var MongoClient = require('mongodb').MongoClient;
+
 const express = require('express');
 const passport = require('passport');
 
 const router = express.Router();
+var url = "mongodb+srv://example:vLLv9md5L9spb80K@ga-demo-bcqlk.mongodb.net/movies-explorer?retryWrites=true";
 
 /**
  * authenticationRequired is a middleware that use the jwt strategy to authenticate
@@ -38,6 +41,18 @@ router.get('/private', authenticationRequired, (req, res) => {
 // This endpoint is protected and has access to the authenticated user.
 router.get('/me', authenticationRequired, (req, res) => {
   res.send({ user: req.user });
+})
+
+router.get('/movies', authenticationRequired, (req, res) => {
+  MongoClient.connect(url, function(err, db) {
+    if (err) throw err;
+    var dbo = db.db("movies-explorer");
+    dbo.collection("movies").find().toArray(function(err, result) {
+      if (err) throw err;
+      res.send(result);
+      db.close();
+    });
+  });
 })
 
 module.exports = router;
