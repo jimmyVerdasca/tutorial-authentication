@@ -2,10 +2,10 @@
   "root": "build/",
   "proxies": {
     "/auth/": {
-      "origin": "/auth"
+      "origin": "${SERVER_URL}/auth"
     },
     "/api/": {
-      "origin": "/api"
+      "origin": "${SERVER_URL}/api"
     }
   }
 }
