@@ -13,8 +13,9 @@ class AuthProvider extends Component {
     this.state = {
       user: null,
       error: null,
+      logIn: this.logIn,
+      logOut: this.logOut,
       signIn: this.signIn,
-      signOut: this.signOut,
     }
   }
 
@@ -24,7 +25,6 @@ class AuthProvider extends Component {
       axios.get('/api/me', {
         headers: {
           Authorization: `bearer ${token}`,
-          Accept: `https://for-tweb.herokuapp.com`,
         }
       })
         .then(response => {
@@ -38,7 +38,20 @@ class AuthProvider extends Component {
     }
   }
 
-  signIn = ({ username, password }) => {
+  signIn = ({ lastname, firstname, username, password })  => {
+    axios.post('/api/user', { lastname, firstname, username, password })
+    .then(response => {
+      const { user, token } = response.data;
+      window.localStorage.setItem('token', token);
+      this.setState({ user });
+    })
+    .catch(error => {
+      console.error(error);
+      this.setState({ error: 'Failed to push user' });
+    })
+  }
+
+  logIn = ({ username, password }) => {
     // Implement me !
     axios.post('/auth/login', { username, password })
       .then(response => {
@@ -52,11 +65,13 @@ class AuthProvider extends Component {
       })
   }
 
-  signOut = () => {
+  logOut = () => {
     // Implement me !
     localStorage.removeItem('token');
     window.location.reload();
   }
+
+  
 
   render() {
     const { children } = this.props

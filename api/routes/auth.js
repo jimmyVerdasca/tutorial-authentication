@@ -4,6 +4,39 @@ const passportLocal = require('passport-local');
 const passportJWT = require('passport-jwt');
 const jwt = require('jsonwebtoken');
 const { jwtOptions } = require('../config');
+const MongoClient = require('mongodb').MongoClient;
+const assert = require('assert');
+
+// Connection URL
+const url = 'mongodb://localhost:27017';
+
+// Database Name
+const dbName = 'myproject';
+
+// Create a new MongoClient
+const client = new MongoClient(url);
+
+// Use connect method to connect to the Server
+client.connect(function(err) {
+  assert.equal(null, err);
+  console.log("Connected successfully to server");
+
+  const db = client.db(dbName);
+
+  const col = db.collection('find');
+
+  db.collection('inserts').insertMany([{username:'admin'}, {password:'admin'}], function(err, r) {
+    assert.equal(null, err);
+    assert.equal(2, r.insertedCount);
+  });
+  
+  col.find([{username:'admin'}, {password:'admin'}]).limit(2).toArray(function(err, docs) {
+    assert.equal(null, err);
+    assert.equal(2, docs.length);
+    client.close();
+  });
+  client.close();
+});
 
 const USER = {
   id: '123456789',
